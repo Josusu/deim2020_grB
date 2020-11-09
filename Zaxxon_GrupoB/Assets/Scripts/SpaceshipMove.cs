@@ -15,15 +15,24 @@ public class SpaceshipMove : MonoBehaviour
     //De momento fija, ya veremos si aumenta con la velocidad o con powerUps
     private float moveSpeed = 3f;
 
+    private Transform theObject;
+    public Vector2 hRange = Vector2.zero;
+    public Vector2 vRange = Vector2.zero;
+
+    //variable que determina si estoy en los márgenes
+    //bool inMarginMove = true;
+
     //Capturo el texto del UI que indicará la distancia recorrida
     [SerializeField] Text TextDistance;
+
+
     
     // Start is called before the first frame update
     void Start()
     {
         //Llamo a la corrutina que hace aumentar la velocidad
         StartCoroutine("Distancia");
-        
+        theObject = GetComponent<Transform>();
     }
 
     // Update is called once per frame
@@ -70,11 +79,40 @@ public class SpaceshipMove : MonoBehaviour
         float desplX = Input.GetAxis("Horizontal");
         float desplY = Input.GetAxis("Vertical");
 
+
+        theObject.position = new Vector3(
+
+            Mathf.Clamp(transform.position.x, hRange.x, hRange.y),
+            Mathf.Clamp(transform.position.y, vRange.x, vRange.y)
+            );
+
+        
+
+        /*float myPosX = transform.position.x;
+        float myPosY = transform.position.y;
+
+        if(myPosX <= -4.5 && desplX < 0)
+        {
+            inMarginMove = false;
+        }
+
+        else if(myPosX >= 4.5 && desplX > 0)
+        {
+            inMarginMove = true;
+        }
+
+        if (inMarginMove == true)
+        {
+            
+
+        }*/
+
         //Movemos la nave mediante el método transform.translate
         //Lo multiplicamos por deltaTime, el eje y la velocidad de movimiento la nave
         transform.Translate(Vector3.right * Time.deltaTime * moveSpeed * desplX);
         transform.Translate(Vector3.up * Time.deltaTime * moveSpeed * desplY);
 
-        
+
+
     }
 }
