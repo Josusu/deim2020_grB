@@ -13,8 +13,12 @@ public class ObstacleCreator : MonoBehaviour
     [SerializeField] Transform InitPos;
 
     //Variables para generar columnas de forma random
-    private float randomNumber;
+    private float randomNumber, speed, cooldown;
     Vector3 RandomPos;
+    
+    //Variables para asociarse con un gameObject y un Script de ese gameObject
+    public GameObject Nave;
+    private SpaceshipMove spaceshipMove;
 
     //distancia a la que se crean las columnas iniciales
     [SerializeField] int distanciaInicial;
@@ -22,20 +26,38 @@ public class ObstacleCreator : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        for(int n = 1; n <= 20; n++)
+
+        for(int n = 1; n <= 15; n++)
         {
             CrearColumna(-n * distanciaInicial);
         }
 
         //Lanzo la corrutina
         StartCoroutine("InstanciadorColumnas");
-
+        
+        //Busco dentro del gameObject un script suyo
+        spaceshipMove = Nave.GetComponent<SpaceshipMove>();
     }
+
+    private void Update()
+    {
+        //Velocidad instanciador de columnas dependiendo de las vidas
+        if(spaceshipMove.vidas != 0)
+        {
+            speed = spaceshipMove.speed;
+        } else
+        {
+            StopCoroutine("InstanciadorColumnas");
+
+        }
+        
+    }
+
 
     //Función que crea una columna en una posición Random
     void CrearColumna(float posZ = 0f)
     {
-        randomNumber = Random.Range(0f, 7f);
+        randomNumber = Random.Range(-3f, 7f);
         RandomPos = new Vector3(randomNumber, 0, posZ);
         //print(RandomPos);
         Vector3 FinalPos = InitPos.position + RandomPos;
@@ -50,10 +72,15 @@ public class ObstacleCreator : MonoBehaviour
         for (; ; )
         {
             CrearColumna(0);
-            yield return new WaitForSeconds(1f);
+
+            //Relacin entre la velocidad de la nave y el tiempo para instanciar columnas
+            cooldown = 1f - (speed * 0.04f);
+            
+            
+            yield return new WaitForSeconds(cooldown);
         }
 
     }
 
-
+    
 }

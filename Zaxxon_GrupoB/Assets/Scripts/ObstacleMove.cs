@@ -22,18 +22,23 @@ public class ObstacleMove : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
-        //Comprobamos si la instancia ha rebasado a la nave y la destruimos
-        //NOTA: habría que pasar esto a una CORRUTINA para consumir menos recursos
-        float PosZ = transform.position.z;
-        if(PosZ < -12)
+
+        //Deja de desplazar columnas dependiendo de las vidas
+        if(spaceshipMove.vidas != 0)
         {
-            Destroy(gameObject);
+            //Comprobamos si la instancia ha rebasado a la nave y la destruimos
+            //NOTA: habría que pasar esto a una CORRUTINA para consumir menos recursos
+            float PosZ = transform.position.z;
+            if (PosZ < -12)
+            {
+                Destroy(gameObject);
+            }
+
+            //Asignamos una velocidad fija (de momento)
+            obstacleSpeed = spaceshipMove.speed * 2.5f;
+            transform.Translate(Vector3.back * Time.deltaTime * obstacleSpeed);
+
         }
 
-        //Asignamos una velocidad fija (de momento)
-        obstacleSpeed = 2.5f;
-        transform.Translate(Vector3.back * Time.deltaTime * obstacleSpeed);
- 
     }
 }
